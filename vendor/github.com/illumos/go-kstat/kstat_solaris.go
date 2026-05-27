@@ -222,7 +222,6 @@ func (t *Token) All() []*KStat {
 	return n
 }
 
-//
 // allocate a C string for a non-blank string; otherwise return nil
 func maybeCString(src string) *C.char {
 	if src == "" {
@@ -241,6 +240,7 @@ func maybeFree(cs *C.char) {
 // strndup behaves like the C function; given a *C.char and a len, it
 // returns a string that is up to len characters long at most.
 // Shorn of casts, it is:
+//
 //	C.GoStringN(p, C.strnlen(p, len))
 //
 // strndup() is necessary to copy fields of the type 'char
@@ -345,7 +345,6 @@ func (tp KSType) String() string {
 
 // KStat is the access handle for the collection of statistics for a
 // particular module:instance:name kstat.
-//
 type KStat struct {
 	Module   string
 	Instance int
@@ -545,7 +544,9 @@ func (k *KStat) AllNamed() ([]*Named, error) {
 }
 
 // Named represents a particular kstat named statistic, ie the full
+//
 //	module:instance:name:statistic
+//
 // and its current value.
 //
 // Name and Type are always valid, but only one of StringVal, IntVal,

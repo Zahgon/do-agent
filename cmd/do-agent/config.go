@@ -1,27 +1,16 @@
 package main
 
 import (
-	"errors"
 	"fmt"
-	"hash/fnv"
 	"net/url"
-	"os"
-	"strings"
 	"time"
 
 	"github.com/alecthomas/kingpin/v2"
-	"github.com/digitalocean/do-agent/internal/flags"
 	"github.com/prometheus/client_golang/prometheus"
 	dto "github.com/prometheus/client_model/go"
-	"github.com/prometheus/common/model"
 
-	"github.com/digitalocean/do-agent/internal/log"
-	"github.com/digitalocean/do-agent/internal/process"
 	"github.com/digitalocean/do-agent/pkg/clients/tsclient"
-	"github.com/digitalocean/do-agent/pkg/collector"
 	"github.com/digitalocean/do-agent/pkg/decorate"
-	"github.com/digitalocean/do-agent/pkg/decorate/compat"
-	"github.com/digitalocean/do-agent/pkg/writer"
 )
 
 var (
@@ -154,121 +143,31 @@ func init() {
 
 }
 
-func initConfig() {
-	os.Args = append(os.Args, additionalParams...)
+func initConfig() { _ = "STUB: not implemented"; return }
 
-	// read flags from cli directly first so we have access to them
-	flags.Init(os.Args[1:])
+// read flags from cli directly first so we have access to them
 
-	// parse all command line flags which are defined across the app
-	kingpin.HelpFlag.Short('h')
-	kingpin.Parse()
+// parse all command line flags which are defined across the app
 
-}
+func checkConfig() error { _ = "STUB: not implemented"; return nil }
 
-func checkConfig() error {
-	var err error
-	for name, uri := range config.targets {
-		if _, err = url.Parse(uri); err != nil {
-			return fmt.Errorf("url for target %q is not valid: %w", name, err)
-		}
-	}
-
-	if config.bearerTokenFile != "" && config.bearerToken != "" {
-		return errors.New("both mutually exclusive flags --bearer-token and --bearer-token-file set")
-	}
-
-	return nil
-}
-
-func toggleGradualRollouts() {
-	hostname, err := os.Hostname()
-	if err != nil {
-		return
-	}
-
-	hash := fnv.New64a()
-	_, err = hash.Write([]byte(hostname))
-	if err != nil {
-		return
-	}
-
-	if hash.Sum64()%100 <= processScrapingDropletPct {
-		log.Debug("Enabling process scraping")
-		config.noProcesses = false
-	}
-}
+func toggleGradualRollouts() { _ = "STUB: not implemented"; return }
 
 func initWriter(wc *prometheus.CounterVec) (metricWriter, limiter) {
-	if config.stdoutOnly {
-		return writer.NewFile(os.Stdout, wc), &constThrottler{wait: 10 * time.Second}
-	}
-
-	tsc := newTimeseriesClient()
-	return writer.NewSonar(tsc, wc), tsc
+	_ = "STUB: not implemented"
+	return *new(metricWriter), *new(limiter)
 }
 
-func initDecorator() decorate.Chain {
-	chain := decorate.Chain{
-		compat.Names{},
-		compat.Disk{},
-		compat.CPU{},
-		decorate.LowercaseNames{},
-	}
+func initDecorator() decorate.Chain { _ = "STUB: not implemented"; return *new(decorate.Chain) }
 
-	if !config.noProcesses {
-		chain = append(chain, decorate.TopK{K: uint(config.topK), N: "sonar_process_"}) // TopK sonar processes
-	}
+// TopK sonar processes
 
-	// If additionalLabels provided convert into decorator
-	if len(config.additionalLabels) != 0 {
-		chain = append(chain, decorate.LabelAppender(convertToLabelPairs(config.additionalLabels)))
-	}
-
-	return chain
-}
+// If additionalLabels provided convert into decorator
 
 // initAggregatorSpecs initializes the field aggregation specifications.
 // The map's key is the prometheus metric name to aggregate over, and the value is the label to aggregate away.
 // The metric name should be in the format expected after the decorators are applied, e.g., lowercase.
-func initAggregatorSpecs() map[string][]string {
-	aggregateSpecs := make(map[string][]string)
-
-	for k, v := range dropletAggregationSpec {
-		aggregateSpecs[k] = append(aggregateSpecs[k], v...)
-	}
-
-	if config.dbaas != "" {
-		for k, v := range dbaasAggregationSpec {
-			aggregateSpecs[k] = append(aggregateSpecs[k], v...)
-		}
-	}
-
-	if config.mongodb != "" {
-		for k, v := range mongoAggregationSpec {
-			aggregateSpecs[k] = append(aggregateSpecs[k], v...)
-		}
-
-	}
-
-	if config.kubernetes != "" {
-		for k, v := range k8sAggregationSpec {
-			aggregateSpecs[k] = append(aggregateSpecs[k], v...)
-		}
-	}
-
-	if config.gpuMetricsPath != "" {
-		for k, v := range gpuAggregationSpec {
-			aggregateSpecs[k] = append(aggregateSpecs[k], v...)
-		}
-	}
-	if config.diMetricsPath != "" {
-		for k, v := range diAggregationSpec {
-			aggregateSpecs[k] = append(aggregateSpecs[k], v...)
-		}
-	}
-	return aggregateSpecs
-}
+func initAggregatorSpecs() map[string][]string { _ = "STUB: not implemented"; return nil }
 
 // WrappedTSClient wraps the tsClient and adds a Name method to it
 type WrappedTSClient struct {
@@ -276,174 +175,38 @@ type WrappedTSClient struct {
 }
 
 // Name returns the name of the client
-func (m *WrappedTSClient) Name() string { return "tsclient" }
+func (m *WrappedTSClient) Name() string { _ = "STUB: not implemented"; return "" }
 
-func newTimeseriesClient() *WrappedTSClient {
-	clientOptions := []tsclient.ClientOptFn{
-		tsclient.WithUserAgent(fmt.Sprintf("do-agent-%s", version)),
-		tsclient.WithRadarEndpoint(config.authURL.String()),
-		tsclient.WithMetadataEndpoint(config.metadataURL.String()),
-		tsclient.WithDefaultLimits(config.defaultMaxBatchSize, config.defaultMaxMetricLength),
-	}
-
-	if config.sonarEndpoint != "" {
-		clientOptions = append(clientOptions, tsclient.WithWharfEndpoint(config.sonarEndpoint))
-	}
-
-	tsClient := tsclient.New(clientOptions...)
-	wrappedTSClient := &WrappedTSClient{tsClient}
-
-	return wrappedTSClient
-}
+func newTimeseriesClient() *WrappedTSClient { _ = "STUB: not implemented"; return nil }
 
 // initCollectors initializes the prometheus collectors. By default this
 // includes node_exporter and buildInfo for each remote target
 func initCollectors() []prometheus.Collector {
+	_ = "STUB: not implemented"
 	// buildInfo provides build information for tracking metrics internally
-	cols := []prometheus.Collector{
-		buildInfo,
-		diagnosticMetric,
-	}
-
-	if config.kubernetes != "" {
-		cols = appendKubernetesCollectors(cols)
-	}
-
-	// Top process collection
-	if !config.noProcesses {
-		cols = append(cols, process.NewProcessCollector())
-	}
-
-	if config.dbaas != "" {
-		k, err := collector.NewScraper("dodbaas", config.dbaas, nil, dbaasWhitelist, collector.WithTimeout(config.scrapeTimeout))
-		if err != nil {
-			log.Error("Failed to initialize DO DBaaS metrics collector: %+v", err)
-		} else {
-			cols = append(cols, k)
-		}
-	}
-
-	if config.mongodb != "" {
-		k, err := collector.NewScraper("mongodb", config.mongodb, nil, dbaasWhitelist, collector.WithTimeout(config.scrapeTimeout))
-		if err != nil {
-			log.Error("Failed to initialize DO DBaaS MongoDB metrics collector: %+v", err)
-		} else {
-			cols = append(cols, k)
-		}
-	}
-
-	if config.promAddr != "" {
-		k, err := collector.NewScraper("prometheus", config.promAddr, nil, nil, collector.WithTimeout(config.scrapeTimeout))
-		if err != nil {
-			log.Error("Failed to initialize generic metrics collector: %+v", err)
-		} else {
-			cols = append(cols, k)
-		}
-	}
-
-	if config.diMetricsPath != "" {
-		di, err := collector.NewScraper("di", config.diMetricsPath, nil, diWhitelist, collector.WithTimeout(config.scrapeTimeout))
-		if err != nil {
-			log.Error("Failed to initialize DI metrics collector: %+v", err)
-		} else {
-			cols = append(cols, di)
-		}
-	}
-
-	if config.gpuMetricsPath != "" {
-		gpu, err := collector.NewScraper("gpu", config.gpuMetricsPath, nil, gpuWhitelist, collector.WithTimeout(config.scrapeTimeout))
-		if err != nil {
-			log.Error("Failed to initialize GPU metrics collector: %+v", err)
-		} else {
-			cols = append(cols, gpu)
-		}
-	}
-
-	// create the default DO agent to collect metrics about
-	// this device
-	if !config.noNode {
-		node, err := collector.NewNodeCollector()
-		if err != nil {
-			log.Fatal("failed to create DO agent: %+v", err)
-		}
-		log.Debug("%d node_exporter collectors were registered", len(node.Collectors()))
-
-		for name := range node.Collectors() {
-			log.Debug("node_exporter collector registered %q", name)
-		}
-		cols = append(cols, node)
-	}
-
-	return cols
+	return nil
 }
+
+// Top process collection
+
+// create the default DO agent to collect metrics about
+// this device
 
 // appendKubernetesCollectors appends a kubernetes metrics collector if it can be initialized successfully
 func appendKubernetesCollectors(cols []prometheus.Collector) []prometheus.Collector {
-	opts := []collector.Option{
-		collector.WithTimeout(config.scrapeTimeout),
-		collector.WithLogLevel(log.LevelDebug),
-	}
-
-	if config.bearerToken != "" {
-		opts = append(opts, collector.WithBearerToken(config.bearerToken))
-	}
-
-	if config.bearerTokenFile != "" {
-		opts = append(opts, collector.WithBearerTokenFile(config.bearerTokenFile))
-	}
-
-	k, err := collector.NewScraper("dokubernetes", config.kubernetes, nil, k8sWhitelist, opts...)
-	if err != nil {
-		log.Error("Failed to initialize DO Kubernetes metrics: %+v", err)
-		return cols
-	}
-	cols = append(cols, k)
-	return cols
+	_ = "STUB: not implemented"
+	return nil
 }
 
 // disableCollectors disables collectors by names by adding a list of
 // --no-collector.<name> flags to additionalParams
-func disableCollectors(names ...string) {
-	f := make([]string, 0, len(names))
-	for _, name := range names {
-		if _, ok := disabledCollectors[name]; ok {
-			// already disabled
-			continue
-		}
+func disableCollectors(names ...string) { _ = "STUB: not implemented"; return }
 
-		disabledCollectors[name] = nil
-		f = append(f, disableCollectorFlag(name))
-	}
-
-	additionalParams = append(additionalParams, f...)
-}
+// already disabled
 
 // disableCollectorFlag creates the correct cli flag for the given collector name
-func disableCollectorFlag(name string) string {
-	return fmt.Sprintf("--no-collector.%s", name)
-}
+func disableCollectorFlag(name string) string { _ = "STUB: not implemented"; return "" }
 
-func convertToLabelPairs(s []string) []*dto.LabelPair {
-	l := []*dto.LabelPair{}
-	for _, lbl := range s {
-		vals := strings.SplitN(lbl, ":", 2)
-		if len(vals) != 2 { // require a key value pair
-			log.Fatal("Bad additional-label %s, must be in the format of <key>:<value>", lbl)
-		}
+func convertToLabelPairs(s []string) []*dto.LabelPair { _ = "STUB: not implemented"; return nil }
 
-		if !model.LabelName(vals[0]).IsValid() {
-			log.Fatal("Bad additional-label name %s", vals[0])
-		}
-
-		if !model.LabelValue(vals[1]).IsValid() {
-			log.Fatal("Bad additional-label value %s", vals[1])
-		}
-
-		l = append(l, &dto.LabelPair{
-			Name:  &vals[0],
-			Value: &vals[1],
-		})
-	}
-
-	return l
-}
+// require a key value pair

@@ -18,9 +18,10 @@ package collector
 
 import (
 	"fmt"
-	"golang.org/x/sys/unix"
 	"net"
 	"strconv"
+
+	"golang.org/x/sys/unix"
 
 	"github.com/go-kit/log"
 	"github.com/jsimonetti/rtnetlink"

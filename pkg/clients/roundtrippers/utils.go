@@ -2,17 +2,8 @@ package roundtrippers
 
 import "net/http"
 
-func cloneRequest(req *http.Request) *http.Request {
-	r := new(http.Request)
+func cloneRequest(req *http.Request) *http.Request { _ = "STUB: not implemented"; return nil }
 
-	// shallow clone
-	*r = *req
+// shallow clone
 
-	// deep copy headers
-	r.Header = make(http.Header)
-	for k, v := range req.Header {
-		r.Header[k] = v
-	}
-
-	return r
-}
+// deep copy headers

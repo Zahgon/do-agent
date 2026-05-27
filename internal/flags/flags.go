@@ -4,7 +4,6 @@
 package flags
 
 import (
-	"github.com/alecthomas/kingpin/v2"
 	"github.com/prometheus/procfs"
 )
 
@@ -18,20 +17,8 @@ var (
 )
 
 // Init initializes and reads system paths from command line flags
-func Init(args []string) {
-	app := kingpin.New("", "")
+func Init(args []string) { _ = "STUB: not implemented"; return }
 
-	procfsPath := app.Flag("path.procfs", "procfs mountpoint.").Default("/proc").String()
-	sysfsPath := app.Flag("path.sysfs", "sysfs mountpoint.").Default("/sys").String()
-	rootfsPath := app.Flag("path.rootfs", "rootfs mountpoint.").Default("/").String()
-
-	_, err := app.Parse(args)
-	// this will always error for unknown flags passed in that aren't defined in
-	// this file since we only capture the flags we're interested in. this
-	// blackhole assignment silences the linter. Sue me.
-	_ = err
-
-	ProcfsPath = *procfsPath
-	SysfsPath = *sysfsPath
-	RootfsPath = *rootfsPath
-}
+// this will always error for unknown flags passed in that aren't defined in
+// this file since we only capture the flags we're interested in. this
+// blackhole assignment silences the linter. Sue me.

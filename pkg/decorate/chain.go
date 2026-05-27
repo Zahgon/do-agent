@@ -12,13 +12,7 @@ type Decorator interface {
 type Chain []Decorator
 
 // Decorate the metric family
-func (c Chain) Decorate(mfs []*dto.MetricFamily) {
-	for _, d := range c {
-		d.Decorate(mfs)
-	}
-}
+func (c Chain) Decorate(mfs []*dto.MetricFamily) { _ = "STUB: not implemented"; return }
 
 // Name is the name of the decorator
-func (c Chain) Name() string {
-	return "Chain"
-}
+func (c Chain) Name() string { _ = "STUB: not implemented"; return "" }

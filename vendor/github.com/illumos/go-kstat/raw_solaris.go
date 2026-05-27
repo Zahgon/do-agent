@@ -142,7 +142,6 @@ func (k *KStat) GetMntinfo() (*Mntinfo, error) {
 // entirely of safe things. A safe thing is entirely self contained
 // and may be initialized from random memory without breaking Go's
 // memory safety (although the values it contains may be garbage).
-//
 func safeThing(t reflect.Type) bool {
 	switch t.Kind() {
 	case reflect.Int8, reflect.Int16, reflect.Int32, reflect.Int64, reflect.Uint8, reflect.Uint16, reflect.Uint32, reflect.Uint64:

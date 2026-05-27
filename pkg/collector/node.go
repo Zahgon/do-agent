@@ -1,13 +1,9 @@
 package collector
 
 import (
-	"fmt"
 	"regexp"
-	"strings"
 
-	"github.com/digitalocean/do-agent/internal/log"
 	"github.com/prometheus/client_golang/prometheus"
-	dto "github.com/prometheus/client_model/go"
 	"github.com/prometheus/node_exporter/collector"
 )
 
@@ -45,20 +41,7 @@ var metricWhitelist = []string{
 }
 
 // NewNodeCollector creates a new prometheus NodeCollector
-func NewNodeCollector() (*NodeCollector, error) {
-	c, err := collector.NewNodeCollector(log.GetCollectorLogger())
-	if err != nil {
-		return nil, fmt.Errorf("failed to create NodeCollector: %w", err)
-	}
-
-	return &NodeCollector{
-		collectFunc:  c.Collect,
-		describeFunc: c.Describe,
-		collectorsFunc: func() map[string]collector.Collector {
-			return c.Collectors
-		},
-	}, nil
-}
+func NewNodeCollector() (*NodeCollector, error) { _ = "STUB: not implemented"; return nil, nil }
 
 // NodeCollector is a collector that collects data using
 // prometheus/node_exporter. Since prometheus returns an internal type we have
@@ -71,54 +54,27 @@ type NodeCollector struct {
 
 // Collectors returns the list of collectors registered
 func (n *NodeCollector) Collectors() map[string]collector.Collector {
-	return n.collectorsFunc()
+	_ = "STUB: not implemented"
+	return nil
+
+	// Name returns the name of this collector
 }
 
-// Name returns the name of this collector
 func (n *NodeCollector) Name() string {
-	return "node"
+	_ = "STUB: not implemented"
+
+	// Collect collects metrics using prometheus/node_exporter
+	return ""
 }
 
-// Collect collects metrics using prometheus/node_exporter
-func (n *NodeCollector) Collect(ch chan<- prometheus.Metric) {
-	tee := make(chan prometheus.Metric, 1)
-	go func() {
-		defer close(tee)
-		n.collectFunc(tee)
-	}()
-	for m := range tee {
-		// Desc doesn't allow access to underlying fields like fqName. The String() output contains
-		// Desc{fqName: "node_network_transmit_bytes_total", help: "Network device statistic transmit_bytes.", constLabels: {}, variableLabels: [device]}
-		// this is ugly but currently all we can do
-		d := strings.ToLower(m.Desc().String())
-		for _, s := range metricWhitelist {
-			if !strings.Contains(d, fmt.Sprintf(`fqname: "%s"`, s)) {
-				continue
-			}
-			if strings.Contains(d, "node_network") && !validNetwork(m) {
-				continue
-			}
-			ch <- m
-		}
-	}
-}
+func (n *NodeCollector) Collect(ch chan<- prometheus.Metric) { _ = "STUB: not implemented"; return }
+
+// Desc doesn't allow access to underlying fields like fqName. The String() output contains
+// Desc{fqName: "node_network_transmit_bytes_total", help: "Network device statistic transmit_bytes.", constLabels: {}, variableLabels: [device]}
+// this is ugly but currently all we can do
 
 // validNetwork checks that the network name for this metric is whitelisted. If the metric is not in the whitelist
-func validNetwork(m prometheus.Metric) bool {
-	var mt dto.Metric
-	if err := m.Write(&mt); err != nil {
-		return false
-	}
-	for _, lp := range mt.GetLabel() {
-		if lp.GetName() != "device" {
-			continue
-		}
-		return networkNameWhitelistReg.MatchString(lp.GetValue())
-	}
-	return false
-}
+func validNetwork(m prometheus.Metric) bool { _ = "STUB: not implemented"; return false }
 
 // Describe describes the metrics collected using prometheus/node_exporter
-func (n *NodeCollector) Describe(ch chan<- *prometheus.Desc) {
-	n.describeFunc(ch)
-}
+func (n *NodeCollector) Describe(ch chan<- *prometheus.Desc) { _ = "STUB: not implemented"; return }

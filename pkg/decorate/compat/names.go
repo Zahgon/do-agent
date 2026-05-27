@@ -1,9 +1,6 @@
 package compat
 
 import (
-	"fmt"
-	"strings"
-
 	dto "github.com/prometheus/client_model/go"
 )
 
@@ -36,20 +33,9 @@ var nameConversions = map[string]string{
 type Names struct{}
 
 // Name is the name of this decorator
-func (n Names) Name() string {
-	return fmt.Sprintf("%T", n)
-}
+func (n Names) Name() string { _ = "STUB: not implemented"; return "" }
 
 // Decorate decorates the provided metrics for compatibility
-func (Names) Decorate(mfs []*dto.MetricFamily) {
-	for _, mf := range mfs {
-		n := strings.ToLower(mf.GetName())
-		if newName, ok := nameConversions[n]; ok {
-			mf.Name = &newName
-		}
-	}
-}
+func (Names) Decorate(mfs []*dto.MetricFamily) { _ = "STUB: not implemented"; return }
 
-func sptr(s string) *string {
-	return &s
-}
+func sptr(s string) *string { _ = "STUB: not implemented"; return nil }

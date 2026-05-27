@@ -8,16 +8,7 @@ import (
 type LabelAppender []*dto.LabelPair
 
 // Decorate adds metric labels from its list
-func (l LabelAppender) Decorate(mfs []*dto.MetricFamily) {
-	for _, fam := range mfs {
-		metrics := fam.GetMetric()
-		for _, metric := range metrics {
-			metric.Label = append(metric.Label, l...)
-		}
-	}
-}
+func (l LabelAppender) Decorate(mfs []*dto.MetricFamily) { _ = "STUB: not implemented"; return }
 
 // Name is the name of this decorator
-func (LabelAppender) Name() string {
-	return "LabelsAppender"
-}
+func (LabelAppender) Name() string { _ = "STUB: not implemented"; return "" }

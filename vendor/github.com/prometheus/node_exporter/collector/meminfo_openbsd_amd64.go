@@ -17,8 +17,9 @@
 package collector
 
 import (
-	"golang.org/x/sys/unix"
 	"unsafe"
+
+	"golang.org/x/sys/unix"
 )
 
 const (

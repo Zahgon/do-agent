@@ -20,8 +20,9 @@ import (
 	"github.com/go-kit/log"
 	"github.com/go-kit/log/level"
 
-	"golang.org/x/sys/unix"
 	"unsafe"
+
+	"golang.org/x/sys/unix"
 )
 
 func getNetDevStats(filter *deviceFilter, logger log.Logger) (netDevStats, error) {

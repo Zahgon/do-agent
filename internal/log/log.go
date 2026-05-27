@@ -1,12 +1,9 @@
 package log
 
 import (
-	"fmt"
 	"log"
-	"log/syslog"
 	"os"
 	"regexp"
-	"strings"
 
 	kitlog "github.com/go-kit/kit/log"
 )
@@ -42,67 +39,27 @@ type CollectorWriter struct {
 }
 
 // Write implements io.Writer.
-func (w CollectorWriter) Write(p []byte) (int, error) {
-	out := strings.TrimSpace(string(w.trimmerRegex.ReplaceAll(p, []byte{})))
-	// Adjust the calldepth to account for the kitlog frames
-	err := w.stdlog.Output(5, out)
-	if err != nil {
-		fmt.Fprintf(os.Stderr, "ERROR writing log output: %+v", err)
-	}
-	return len(p), nil
-}
+func (w CollectorWriter) Write(p []byte) (int, error) { _ = "STUB: not implemented"; return 0, nil }
+
+// Adjust the calldepth to account for the kitlog frames
 
 // SetLevel sets the log level
 func SetLevel(l Level) {
-	level = l
+	_ = "STUB: not implemented"
+
+	// InitSyslog initializes logging to syslog
+	return
 }
 
-// InitSyslog initializes logging to syslog
-func InitSyslog() (err error) {
-	dl, err := syslog.NewLogger(syslog.LOG_NOTICE|syslog.LOG_SYSLOG, syslogFlags)
-	if err != nil {
-		return fmt.Errorf("InitSyslog failed to initialize debug logger: %+v", err)
-	}
-	debuglog = dl
-
-	el, err := syslog.NewLogger(syslog.LOG_ERR|syslog.LOG_SYSLOG, syslogFlags)
-	if err != nil {
-		return fmt.Errorf("InitSyslog failed to initialize error logger: %+v", err)
-	}
-	errlog = el
-
-	return nil
-}
+func InitSyslog() (err error) { _ = "STUB: not implemented"; return nil }
 
 // Debug prints a debug message. If syslog is enabled then LOG_NOTICE is used
-func Debug(msg string, params ...interface{}) {
-	if level > LevelDebug {
-		return
-	}
-
-	if err := debuglog.Output(2, fmt.Sprintf(msg, params...)); err != nil {
-		fmt.Fprintf(os.Stderr, "ERROR writing log output: %+v", err)
-	}
-}
+func Debug(msg string, params ...interface{}) { _ = "STUB: not implemented"; return }
 
 // Error prints an error message. If syslog is enabled then LOG_ERR is used
-func Error(msg string, params ...interface{}) {
-	if err := errlog.Output(2, fmt.Sprintf(msg, params...)); err != nil {
-		fmt.Fprintf(os.Stderr, "ERROR writing log output: %+v", err)
-	}
-}
+func Error(msg string, params ...interface{}) { _ = "STUB: not implemented"; return }
 
 // Fatal logs Error and exits 1
-func Fatal(msg string, params ...interface{}) {
-	if err := errlog.Output(2, fmt.Sprintf(msg, params...)); err != nil {
-		fmt.Fprintf(os.Stderr, "ERROR writing log output: %+v", err)
-	}
-	os.Exit(1)
-}
+func Fatal(msg string, params ...interface{}) { _ = "STUB: not implemented"; return }
 
-func GetCollectorLogger() kitlog.Logger {
-	if level > LevelDebug {
-		return kitlogLogger
-	}
-	return kitlogDebug
-}
+func GetCollectorLogger() kitlog.Logger { _ = "STUB: not implemented"; return *new(kitlog.Logger) }

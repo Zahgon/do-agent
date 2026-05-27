@@ -7,10 +7,10 @@ type constThrottler struct {
 }
 
 func (c *constThrottler) WaitDuration() time.Duration {
-	return c.wait
+	_ = "STUB: not implemented"
+
+	// Name is the name of this limiter
+	return *new(time.Duration)
 }
 
-// Name is the name of this limiter
-func (c *constThrottler) Name() string {
-	return "constant"
-}
+func (c *constThrottler) Name() string { _ = "STUB: not implemented"; return "" }

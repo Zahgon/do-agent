@@ -27,9 +27,4 @@ var (
 // This should be called from within OS-specific builds since the underlying
 // collectors will not be registered otherwise.
 // This func can be called multiple times.
-func registerFilesystemFlags() {
-	onceRegisterFilesystemFlags.Do(func() {
-		additionalParams = append(additionalParams, ignoredFSTypesFlag, ignoredFSTypes)
-		additionalParams = append(additionalParams, ignoredMountPointFlag, ignoredMountPoints)
-	})
-}
+func registerFilesystemFlags() { _ = "STUB: not implemented"; return }

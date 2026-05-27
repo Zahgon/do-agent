@@ -9,9 +9,7 @@ type UnexpectedHTTPStatusError struct {
 }
 
 // Error returns the error string
-func (e *UnexpectedHTTPStatusError) Error() string {
-	return fmt.Sprintf("received unexpected HTTP status: %d", e.StatusCode)
-}
+func (e *UnexpectedHTTPStatusError) Error() string { _ = "STUB: not implemented"; return "" }
 
 // ErrSendTooFrequent happens if the client attempts to send metrics faster
 // than what the server requested

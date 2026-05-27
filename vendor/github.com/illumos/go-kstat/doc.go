@@ -1,4 +1,3 @@
-//
 // Package kstat provides a Go interface to the Solaris/OmniOS
 // kstat(s) system for user-level access to a lot of kernel
 // statistics. For more documentation on kstats, see kstat(1) and
@@ -46,14 +45,14 @@
 // NOTE: this package is quite young. The API may well change as
 // I (and other people) gain more experience with it.
 //
-// PERFORMANCE
+// # PERFORMANCE
 //
 // In general this is not going to be as lean and mean as calling
 // C directly, partly because of intrinsic CGo overheads and partly
 // because we do more memory allocation and deallocation than a C
 // program would (partly because we prioritize not leaking memory).
 //
-// SUPPORTED AND UNSUPPORTED KSTAT TYPES
+// # SUPPORTED AND UNSUPPORTED KSTAT TYPES
 //
 // We support named kstats and IO kstats (KSTAT_TYPE_NAMED and
 // KSTAT_TYPE_IO / kstat_io_t respectively). kstat(1) also knows about
@@ -89,7 +88,6 @@
 // you're probably not seeing the detailed API documentation for
 // constants, types, and so on because of tooling limitations in godoc
 // et al.)
-//
 package kstat
 
 //

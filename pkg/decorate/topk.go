@@ -1,9 +1,6 @@
 package decorate
 
 import (
-	"container/heap"
-	"strings"
-
 	dto "github.com/prometheus/client_model/go"
 )
 
@@ -14,72 +11,22 @@ type TopK struct {
 }
 
 // Decorate removes all but the top K metrics for a given metric name
-func (t TopK) Decorate(mfs []*dto.MetricFamily) {
-	var topk []*metricHeap
-	var idx []int
-	for i, fam := range mfs {
-		if strings.HasPrefix(fam.GetName(), t.N) {
-			tk := metricHeap(fam.Metric)
-			heap.Init(&tk)
-			idx = append(idx, i)
-			topk = append(topk, &tk)
-		}
-	}
-
-	for i := range topk {
-		mfs[idx[i]].Metric = topk[i].TopK(t.K)
-	}
-}
+func (t TopK) Decorate(mfs []*dto.MetricFamily) { _ = "STUB: not implemented"; return }
 
 // Name is the name of this decorator
-func (t TopK) Name() string {
-	return "TopK"
-}
+func (t TopK) Name() string { _ = "STUB: not implemented"; return "" }
 
 type metricHeap []*dto.Metric
 
-func (m metricHeap) Len() int { return len(m) }
+func (m metricHeap) Len() int { _ = "STUB: not implemented"; return 0 }
 
-func (m metricHeap) Swap(i, j int) { m[i], m[j] = m[j], m[i] }
+func (m metricHeap) Swap(i, j int) { _ = "STUB: not implemented"; return }
 
 // invert less function to create max heap
-func (m metricHeap) Less(i, j int) bool {
-	switch {
-	case m[i].Gauge != nil:
-		return *m[i].Gauge.Value > *m[j].Gauge.Value
-	case m[i].Counter != nil:
-		return *m[i].Counter.Value > *m[j].Counter.Value
-	case m[i].Summary != nil:
-		return *m[i].Summary.SampleSum > *m[j].Summary.SampleSum
-	case m[i].Untyped != nil:
-		return *m[i].Untyped.Value > *m[j].Untyped.Value
-	case m[i].Histogram != nil:
-		return *m[i].Histogram.SampleSum > *m[j].Histogram.SampleSum
-	default:
-		return false
-	}
-}
+func (m metricHeap) Less(i, j int) bool { _ = "STUB: not implemented"; return false }
 
-func (m *metricHeap) Push(x interface{}) {
-	*m = append(*m, x.(*dto.Metric))
-}
+func (m *metricHeap) Push(x interface{}) { _ = "STUB: not implemented"; return }
 
-func (m *metricHeap) Pop() interface{} {
-	old := *m
-	n := len(old)
-	x := old[n-1]
-	*m = old[:n-1]
-	return x
-}
+func (m *metricHeap) Pop() interface{} { _ = "STUB: not implemented"; return nil }
 
-func (m *metricHeap) TopK(k uint) []*dto.Metric {
-	var topk []*dto.Metric
-	if k > uint(len(*m)) {
-		k = uint(len(*m))
-	}
-	for i := uint(0); i < k; i++ {
-		topk = append(topk, heap.Pop(m).(*dto.Metric))
-	}
-
-	return topk
-}
+func (m *metricHeap) TopK(k uint) []*dto.Metric { _ = "STUB: not implemented"; return nil }
